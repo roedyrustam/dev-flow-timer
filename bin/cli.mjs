@@ -11,7 +11,9 @@ import {
   logWater,
   setDailyGoal,
   getErgonomicTip,
-  recordActivity
+  recordActivity,
+  getRecentSessions,
+  exportHistory
 } from '../lib/timer-engine.mjs';
 import { saveAndOpenDashboard } from '../lib/dashboard-generator.mjs';
 import { generateAnalyticsReport, exportReportToFile } from '../lib/analytics-reporter.mjs';
@@ -267,12 +269,117 @@ switch (command) {
     break;
   }
 
+  case 'history': {
+    printHeader();
+    const limit = parseInt(args[1], 10) || 10;
+    const sessions = getRecentSessions(limit);
+    console.log(`  📋 \x1b[1mRecent Session History (Last ${sessions.length} sessions)\x1b[0m`);
+    if (!sessions || sessions.length === 0) {
+      console.log('     (No sessions recorded yet)\n');
+    } else {
+      sessions.forEach((s, idx) => {
+        const timeStr = s.startedAt ? new Date(s.startedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+        const statusEmoji = s.completed ? '\x1b[32m✔\x1b[0m' : '\x1b[31m✖\x1b[0m';
+        const typeStr = s.type ? s.type.toUpperCase().padEnd(11) : 'CODING     ';
+        console.log(`     ${idx + 1}. [${s.date} ${timeStr}] ${statusEmoji} ${typeStr} : ${s.task} (${s.actualElapsedMinutes}m) [tag: ${s.tag || 'general'}]`);
+      });
+      console.log('');
+    }
+    break;
+  }
+
+  case 'export': {
+    printHeader();
+    const format = (args[1] || 'json').toLowerCase().replace('--', '');
+    const targetFile = args[2] || null;
+    const content = exportHistory(format === 'csv' ? 'csv' : 'json');
+    if (targetFile) {
+      const fs = await import('node:fs');
+      fs.writeFileSync(targetFile, content, 'utf8');
+      console.log(`  \x1b[32m✔ Exported productivity history (${format.toUpperCase()}) to: ${targetFile}\x1b[0m\n`);
+    } else {
+      console.log(content);
+      console.log(`\n  \x1b[32m✔ Exported in ${format.toUpperCase()} format.\x1b[0m Tip: devflow export csv ./history.csv\n`);
+    }
+    break;
+  }
+
+  case 'watch': {
+    const readline = await import('node:readline');
+    let isExiting = false;
+
+    const cleanup = () => {
+      if (isExiting) return;
+      isExiting = true;
+      if (process.stdin.isTTY) {
+        try { process.stdin.setRawMode(false); } catch (e) {}
+      }
+      process.stdout.write('\x1b[?25h\n'); // show cursor
+      process.exit(0);
+    };
+
+    process.on('SIGINT', cleanup);
+    process.on('SIGTERM', cleanup);
+
+    if (process.stdin.isTTY) {
+      readline.emitKeypressEvents(process.stdin);
+      try {
+        process.stdin.setRawMode(true);
+        process.stdin.on('keypress', (str, key) => {
+          if (key && (key.ctrl && key.name === 'c') || str === 'q' || str === 'Q') {
+            cleanup();
+          } else if (str === 'p' || str === 'P') {
+            pauseSession();
+          } else if (str === 'r' || str === 'R') {
+            resumeSession();
+          } else if (str === 's' || str === 'S') {
+            stopSession({ completed: true });
+          }
+        });
+      } catch (e) {}
+    }
+
+    const render = () => {
+      const status = getStatus();
+      process.stdout.write('\x1b[?25l'); // hide cursor
+      process.stdout.write('\x1b[2J\x1b[H'); // clear screen and move home
+
+      console.log('\x1b[36m⚡ [DevFlow Timer - Live Terminal Watcher]\x1b[0m');
+      console.log('───────────────────────────────────────────────────────');
+
+      if (!status.active) {
+        console.log('\n  Status: \x1b[33mIDLE (No active session)\x1b[0m');
+        console.log(`  Today : ${status.todaySummary.totalCodingMinutes}m coding | ${status.todaySummary.completedPomodoros} Pomodoros completed`);
+        console.log(`\n  \x1b[32m💡 ${status.nextRecommendation}\x1b[0m`);
+        console.log('\n  Controls: Press [q] to exit watcher, or run `devflow start`');
+      } else {
+        const modeColor = status.type === 'coding' ? '\x1b[32m' : '\x1b[34m';
+        const typeTag = status.type.toUpperCase();
+        const pausedTag = status.isPaused ? ' \x1b[33m[PAUSED]\x1b[0m' : ' \x1b[32m[RUNNING]\x1b[0m';
+
+        console.log(`  Mode   : ${modeColor}\x1b[1m${typeTag}\x1b[0m${pausedTag}`);
+        console.log(`  Task   : \x1b[1m${status.task}\x1b[0m ${status.tag ? `(#${status.tag})` : ''}`);
+        console.log(`  Timer  : \x1b[1m\x1b[37m${status.remainingFormatted}\x1b[0m / ${status.targetDurationMinutes}:00 (Elapsed: ${status.elapsedFormatted})`);
+        console.log(`  Prog   : ${renderProgressBar(status.progressPercent, 28)}`);
+        console.log(`  Today  : ${status.todaySummary.totalCodingMinutes}m focused | ${status.todaySummary.completedPomodoros}🍅 completed`);
+        console.log(`\n  \x1b[33m💡 ${status.recommendation}\x1b[0m`);
+        console.log('\n───────────────────────────────────────────────────────');
+        console.log('  Keys   : [\x1b[33mp\x1b[0m] Pause | [\x1b[32mr\x1b[0m] Resume | [\x1b[31ms\x1b[0m] Stop | [\x1b[36mq\x1b[0m] Exit Watcher');
+      }
+    };
+
+    render();
+    setInterval(render, 1000);
+    break;
+  }
+
   default:
     printHeader();
     console.log(`  Available commands:`);
     console.log(`    start [minutes] [task]  - Start focus coding session (default: 25m)`);
     console.log(`    break [minutes]         - Start break session (default: 5m)`);
     console.log(`    eye                     - 20-20-20 eye relief rule (20 seconds)`);
+    console.log(`    watch                   - Live full-screen in-terminal countdown watcher`);
     console.log(`    status                  - Check timer status and remaining time`);
     console.log(`    pause / resume          - Pause or resume running timer`);
     console.log(`    stop                    - End active session and save to history`);
@@ -280,7 +387,8 @@ switch (command) {
     console.log(`    week                    - 7-day productivity trend chart & tag distribution`);
     console.log(`    goal [count]            - Set daily target Pomodoro cycles`);
     console.log(`    water                   - Log 1 glass of water intake (+1 glass)`);
-    console.log(`    log                     - View session history log for today`);
+    console.log(`    log / history           - View session history log`);
+    console.log(`    export [csv|json] [file]- Export productivity session history to CSV/JSON`);
     console.log(`    report                  - Generate and export productivity report (Markdown)`);
     console.log(`    git                     - Inspect Git branch context & suggested focus task`);
     console.log(`    dashboard               - Open visual HTML cockpit in browser`);

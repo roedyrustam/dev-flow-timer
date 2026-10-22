@@ -314,6 +314,24 @@ function getPanelHtml() {
       text-align: center;
       margin-top: 0.2rem;
     }
+    .equalizer-anim {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 10px;
+    }
+    .equalizer-bar {
+      width: 2px;
+      background: #10b981;
+      border-radius: 1px;
+      animation: eqBounce 0.8s ease-in-out infinite alternate;
+    }
+    .equalizer-bar:nth-child(2) { animation-delay: 0.2s; }
+    .equalizer-bar:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes eqBounce {
+      0% { height: 2px; }
+      100% { height: 10px; }
+    }
   </style>
 </head>
 <body>
@@ -400,6 +418,30 @@ function getPanelHtml() {
       </div>
     </div>
 
+    <!-- Ambient Focus Sound -->
+    <div class="card" style="padding: 0.65rem 0.8rem;">
+      <div style="font-size: 0.72rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+        <div style="display:flex; align-items:center; gap:0.35rem;">
+          <span>🎧 Ambient Focus Sound</span>
+          <div class="equalizer-anim" id="sidecarEq" style="display:none;">
+            <div class="equalizer-bar"></div>
+            <div class="equalizer-bar"></div>
+            <div class="equalizer-bar"></div>
+          </div>
+        </div>
+        <span id="sidecarAmbStatus" style="font-size: 0.65rem; color: #94a3b8;">Off</span>
+      </div>
+      <div style="display: flex; gap: 0.4rem; align-items: center;">
+        <select id="sidecarAmbSelect" onchange="sidecarAmbChange()" style="background:#090d16; border:1px solid #1e293b; color:#f8fafc; font-size:0.68rem; padding:0.25rem 0.4rem; border-radius:5px; flex:1; cursor:pointer;">
+          <option value="off">None (Silence)</option>
+          <option value="brown">Brown Noise</option>
+          <option value="rain">Gentle Rain</option>
+          <option value="binaural">40Hz Gamma</option>
+        </select>
+        <input type="range" id="sidecarAmbVol" min="0" max="100" value="35" oninput="sidecarAmbVolume(this.value)" style="width:55px; accent-color:#10b981; cursor:pointer;" title="Volume">
+      </div>
+    </div>
+
     <!-- 7-Day Trend Chart -->
     <div class="card">
       <div style="font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
@@ -441,6 +483,160 @@ function getPanelHtml() {
         osc.start(now);
         osc.stop(now + 0.8);
       } catch(e) {}
+    }
+
+    class FocusAtmosphereSynthesizer {
+      constructor() {
+        this.currentType = 'off';
+        this.volume = 0.35;
+        this.gainNode = null;
+        this.sourceNodes = [];
+        this.isPlaying = false;
+      }
+
+      ensureContext() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+      }
+
+      setVolume(val) {
+        this.volume = Math.max(0, Math.min(1, val));
+        if (this.gainNode && audioCtx) {
+          this.gainNode.gain.setValueAtTime(this.volume, audioCtx.currentTime);
+        }
+      }
+
+      stop() {
+        for (const node of this.sourceNodes) {
+          try {
+            if (node.stop) node.stop();
+            node.disconnect();
+          } catch (e) {}
+        }
+        this.sourceNodes = [];
+        this.isPlaying = false;
+        const eq = document.getElementById('sidecarEq');
+        const status = document.getElementById('sidecarAmbStatus');
+        if (eq) eq.style.display = 'none';
+        if (status) status.textContent = 'Off';
+      }
+
+      play(type) {
+        this.stop();
+        if (!type || type === 'off') {
+          this.currentType = 'off';
+          return;
+        }
+
+        this.ensureContext();
+        this.currentType = type;
+        const ctx = audioCtx;
+        this.gainNode = ctx.createGain();
+        this.gainNode.gain.setValueAtTime(this.volume, ctx.currentTime);
+        this.gainNode.connect(ctx.destination);
+
+        if (type === 'brown') {
+          const bufferSize = ctx.sampleRate * 5;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          let lastOut = 0.0;
+          for (let i = 0; i < bufferSize; i++) {
+            const white = Math.random() * 2 - 1;
+            lastOut = (lastOut + 0.02 * white) / 1.02;
+            data[i] = lastOut * 3.2;
+          }
+
+          const noiseSource = ctx.createBufferSource();
+          noiseSource.buffer = buffer;
+          noiseSource.loop = true;
+
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(450, ctx.currentTime);
+
+          noiseSource.connect(filter);
+          filter.connect(this.gainNode);
+
+          noiseSource.start();
+          this.sourceNodes.push(noiseSource, filter);
+          this.isPlaying = true;
+        } else if (type === 'rain') {
+          const bufferSize = ctx.sampleRate * 5;
+          const buffer = ctx.createBuffer(2, bufferSize, ctx.sampleRate);
+          for (let ch = 0; ch < 2; ch++) {
+            const data = buffer.getChannelData(ch);
+            let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+            for (let i = 0; i < bufferSize; i++) {
+              const white = Math.random() * 2 - 1;
+              b0 = 0.99886 * b0 + white * 0.0555179;
+              b1 = 0.99332 * b1 + white * 0.0750759;
+              b2 = 0.96900 * b2 + white * 0.1538520;
+              b3 = 0.86650 * b3 + white * 0.3104856;
+              b4 = 0.55000 * b4 + white * 0.5329522;
+              b5 = -0.7616 * b5 - white * 0.0168980;
+              data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.12;
+              b6 = white * 0.115926;
+            }
+          }
+
+          const rainSource = ctx.createBufferSource();
+          rainSource.buffer = buffer;
+          rainSource.loop = true;
+
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(1100, ctx.currentTime);
+
+          rainSource.connect(filter);
+          filter.connect(this.gainNode);
+
+          rainSource.start();
+          this.sourceNodes.push(rainSource, filter);
+          this.isPlaying = true;
+        } else if (type === 'binaural') {
+          const merger = ctx.createChannelMerger(2);
+
+          const oscL = ctx.createOscillator();
+          oscL.type = 'sine';
+          oscL.frequency.setValueAtTime(200, ctx.currentTime);
+
+          const oscR = ctx.createOscillator();
+          oscR.type = 'sine';
+          oscR.frequency.setValueAtTime(240, ctx.currentTime);
+
+          oscL.connect(merger, 0, 0);
+          oscR.connect(merger, 0, 1);
+
+          merger.connect(this.gainNode);
+
+          oscL.start();
+          oscR.start();
+
+          this.sourceNodes.push(oscL, oscR, merger);
+          this.isPlaying = true;
+        }
+
+        const eq = document.getElementById('sidecarEq');
+        const status = document.getElementById('sidecarAmbStatus');
+        if (eq) eq.style.display = 'inline-flex';
+        if (status) status.textContent = 'Active (' + Math.round(this.volume * 100) + '%)';
+      }
+    }
+
+    const sidecarSynth = new FocusAtmosphereSynthesizer();
+
+    function sidecarAmbChange() {
+      const sel = document.getElementById('sidecarAmbSelect');
+      sidecarSynth.play(sel.value);
+    }
+
+    function sidecarAmbVolume(val) {
+      const vol = parseFloat(val) / 100;
+      sidecarSynth.setVolume(vol);
+      const status = document.getElementById('sidecarAmbStatus');
+      if (sidecarSynth.isPlaying && status) {
+        status.textContent = 'Active (' + Math.round(vol * 100) + '%)';
+      }
     }
 
     const CIRCUMFERENCE = 2 * Math.PI * 78; // ~490.08

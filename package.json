@@ -13,7 +13,7 @@
     "dashboard": "node bin/cli.mjs dashboard",
     "mcp": "node bin/mcp-server.mjs",
     "report": "node bin/cli.mjs report",
-    "test": "node --check bin/cli.mjs && node --check bin/mcp-server.mjs && node --check sidecars/devflow-panel/server.mjs"
+    "test": "node --check bin/cli.mjs && node --check bin/mcp-server.mjs && node --check sidecars/devflow-panel/server.mjs && node --test test/*.test.mjs"
   },
   "keywords": [
     "antigravity",

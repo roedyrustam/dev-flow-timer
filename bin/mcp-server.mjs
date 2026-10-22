@@ -7,6 +7,8 @@
  */
 
 import readline from 'node:readline';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   startSession,
   pauseSession,
@@ -19,7 +21,8 @@ import {
   setDailyGoal,
   getErgonomicTip,
   updatePreferences,
-  recordActivity
+  recordActivity,
+  exportHistory
 } from '../lib/timer-engine.mjs';
 import { saveAndOpenDashboard, generateDashboardHtml } from '../lib/dashboard-generator.mjs';
 import { generateAnalyticsReport, exportReportToFile } from '../lib/analytics-reporter.mjs';
@@ -187,6 +190,20 @@ export const TOOLS = [
       },
       required: ['goal_pomodoros']
     }
+  },
+  {
+    name: 'devflow_export_history',
+    description: 'Export completed productivity session logs and history in CSV or JSON format.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        format: {
+          type: 'string',
+          enum: ['json', 'csv'],
+          description: 'Export format: "json" (structured hierarchy) or "csv" (tabular rows).'
+        }
+      }
+    }
   }
 ];
 
@@ -347,6 +364,10 @@ export async function handleRpcRequest(request) {
       } else if (name === 'devflow_set_goal') {
         const res = setDailyGoal(args.goal_pomodoros);
         contentText = JSON.stringify(res, null, 2);
+      } else if (name === 'devflow_export_history') {
+        const format = (args.format === 'csv') ? 'csv' : 'json';
+        const res = exportHistory(format);
+        contentText = res;
       } else {
         throw new Error(`Unknown tool '${name}'.`);
       }
@@ -402,5 +423,12 @@ export function startStdioServer() {
   process.on('SIGTERM', () => process.exit(0));
 }
 
-// Start stdio server when executed directly
-startStdioServer();
+// Start stdio server when executed directly (not when imported in test suites)
+const isDirectRun = process.argv[1] && (
+  fileURLToPath(import.meta.url) === path.resolve(process.argv[1]) ||
+  process.argv[1].endsWith('mcp-server.mjs')
+);
+
+if (isDirectRun) {
+  startStdioServer();
+}

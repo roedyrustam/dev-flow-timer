@@ -52,18 +52,19 @@ Once installed, **restart Antigravity** and open `Overview > Plugins > DevFlow T
    - ☕ **Long Break (15m–30m)**: Complete cognitive reset every 4 completed Pomodoro cycles.
 2. **Interactive Visual Cockpit Dashboard**:
    - Standalone HTML5 web application with real-time SVG circular progress ring.
+   - **Ambient Focus Sound Generator**: Pure Web Audio synthesis for Brown Noise (deep cognitive masking), Gentle Rain, and 40Hz Gamma Binaural Beats (flow state).
    - Web Audio Synthesizer: 528Hz Solfeggio harmonic bell chime with zero external audio dependencies.
    - Daily performance metrics: focus time, rest duration, work ratio, and rhythm score.
 3. **Embedded Sidecar UI Panel**:
    - Integrated auxiliary pane inside Antigravity IDE (`sidecars/devflow-panel`).
+   - Built-in ambient sound player, daily Pomodoro goal progress bar, hydration logger, and 7-day trend sparklines.
    - Live synchronization with CLI commands and AI agent tool calls.
-   - Daily Pomodoro goal progress bar, hydration logger, and 7-day trend sparklines.
-4. **14 Native MCP Tools (Model Context Protocol v1.x)**:
-   - Enables AI agents to autonomously manage timers, evaluate workload duration, log water intake, and suggest pacing pauses.
-5. **Flow Coach Companion Subagent**:
-   - Dedicated persona providing empathetic, science-backed ergonomic guidance during long sessions.
-6. **Cross-Platform CLI Launcher**:
-   - Operable directly from terminal or PowerShell via `devflow` commands.
+4. **15 Native MCP Tools (Model Context Protocol v1.x)**:
+   - Enables AI agents to autonomously manage timers, evaluate workload duration, log water intake, export history, and suggest pacing pauses.
+5. **Interactive Live Terminal Watcher (`devflow watch`)**:
+   - In-place real-time countdown display in your terminal with hotkey controls (`p` pause, `r` resume, `s` stop, `q` quit).
+6. **Comprehensive Automated Test Suite**:
+   - Full native unit and integration test suite via `node:test` covering the timer engine, analytics reporter, Git integrator, and MCP server RPC.
 
 ---
 
@@ -85,6 +86,7 @@ Once installed, **restart Antigravity** and open `Overview > Plugins > DevFlow T
 | `devflow_get_weekly_stats` | *(none)* | Retrieves 7-day trend, active streak, and tag breakdown |
 | `devflow_log_water` | *(none)* | Logs 1 glass of water intake to track cellular hydration |
 | `devflow_set_goal` | `goal_pomodoros` | Sets target number of daily Pomodoro cycles |
+| `devflow_export_history` | `format` ('json' or 'csv') | Exports full session history and duration records |
 
 ---
 
@@ -96,6 +98,9 @@ Run commands directly from any terminal or PowerShell prompt:
 # Start a 25-minute Pomodoro focus sprint
 devflow start 25 "Refactor Authentication Middleware"
 
+# Launch real-time in-terminal countdown watcher
+devflow watch
+
 # Start a 5-minute short break
 devflow break 5
 
@@ -105,8 +110,14 @@ devflow eye
 # Check current status and remaining time
 devflow status
 
-# Open visual Cockpit Dashboard in browser
+# Open visual Cockpit Dashboard with Ambient Sounds in browser
 devflow dashboard
+
+# View recent session history log
+devflow history 10
+
+# Export session history to CSV or JSON file
+devflow export csv ./my-focus-history.csv
 
 # View daily productivity metrics
 devflow stats
@@ -125,6 +136,9 @@ devflow report
 
 # Get ergonomic stretching tips
 devflow tip posture
+
+# Run automated tests
+npm test
 ```
 
 ---

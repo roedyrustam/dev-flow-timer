@@ -57,6 +57,7 @@ The AI agent autonomously inspects, starts, and adjusts timers via the following
 | `devflow_get_weekly_stats` | Retrieves 7-day trend, streak, and tag breakdown | *(none)* |
 | `devflow_log_water` | Logs 1 glass of water intake | *(none)* |
 | `devflow_set_goal` | Sets target daily Pomodoro count | `goal_pomodoros` (number) |
+| `devflow_export_history` | Exports full session history in CSV or JSON | `format` ('json' or 'csv') |
 
 ---
 
