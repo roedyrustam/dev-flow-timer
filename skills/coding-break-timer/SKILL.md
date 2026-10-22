@@ -119,3 +119,12 @@ This skill seamlessly collaborates across the ecosystem:
 - **`zero-to-prod-orchestrator`**: Injects ergonomic pauses between major phase transitions (Architecture -> Database -> API -> UI).
 - **`flow-coach`**: Specialized subagent guiding ergonomic pacing and cognitive stamina.
 - **`generative_ui`**: Visualizes real-time progress widgets directly in chat environments.
+
+---
+
+## 6. Availability Fallback Invariant / Invarian Pengalihan Ketersediaan
+When executing background pacing analysis, daily productivity reports, or subagent tasks with frontier models:
+- **Gemini 4 Fallback (Argon & Pro)**: Automatically degrade tasks to **`Gemini 3.8 Flash`** if `Gemini 4` is unprovisioned, rate-limited, or unavailable.
+- **Claude Opus 5.5 Fallback**: Automatically degrade tasks to **`Claude Opus 4.6`** if `Claude Opus 5.5` is unprovisioned, rate-limited, or unavailable.
+- **Zero Interruption**: Pacing recommendations and productivity telemetry must execute continuously through fallback paths without throwing unhandled missing-model errors.
+
