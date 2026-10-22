@@ -1,6 +1,7 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 import {
@@ -27,11 +28,19 @@ const BIND_HOST = '127.0.0.1';
 
 // Load preload.js if available
 let preloadJs = '';
-const possiblePreload = path.resolve(__dirname, '../../../../antigravity/lib/node_modules/sidecar_sdk/preload.js');
-if (fs.existsSync(possiblePreload)) {
-  try {
-    preloadJs = fs.readFileSync(possiblePreload, 'utf8');
-  } catch (e) {}
+const possiblePreloads = [
+  path.join(os.homedir(), '.gemini', 'antigravity', 'lib', 'node_modules', 'sidecar_sdk', 'preload.js'),
+  path.join(os.homedir(), '.gemini', 'config', 'node_modules', 'sidecar_sdk', 'preload.js'),
+  path.resolve(__dirname, '../../../../antigravity/lib/node_modules/sidecar_sdk/preload.js')
+];
+
+for (const p of possiblePreloads) {
+  if (fs.existsSync(p)) {
+    try {
+      preloadJs = fs.readFileSync(p, 'utf8');
+      break;
+    } catch (e) {}
+  }
 }
 
 function getPanelHtml() {
@@ -39,7 +48,7 @@ function getPanelHtml() {
   const tip = getErgonomicTip();
 
   return `<!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -318,7 +327,7 @@ function getPanelHtml() {
       </div>
       <div class="status-badge" id="badgeStatus">
         <div class="dot" id="badgeDot"></div>
-        <span id="badgeText">SIAP</span>
+        <span id="badgeText">READY</span>
       </div>
     </div>
 
@@ -337,33 +346,33 @@ function getPanelHtml() {
 
       <div class="btn-row">
         <button class="btn btn-primary" id="btnMain" onclick="doStart()">
-          <span>▶</span> Mulai
+          <span>▶</span> Start
         </button>
         <button class="btn" id="btnPause" onclick="doPauseToggle()" style="display:none;">
-          <span>⏸</span> Jeda
+          <span>⏸</span> Pause
         </button>
         <button class="btn btn-danger" id="btnStop" onclick="doStop()" style="display:none;">
-          <span>⏹</span> Selesai
+          <span>⏹</span> Stop
         </button>
       </div>
 
       <div class="presets-grid">
         <button class="preset-chip active" id="chip-pomodoro" onclick="applyPreset('coding', 25, 'Pomodoro (25m)')">25m Pomodoro</button>
         <button class="preset-chip" id="chip-deep" onclick="applyPreset('coding', 50, 'Deep Work (50m)')">50m Deep Work</button>
-        <button class="preset-chip" id="chip-break" onclick="applyPreset('short_break', 5, 'Short Rest (5m)')">5m Istirahat</button>
-        <button class="preset-chip" id="chip-eye" onclick="applyPreset('eye_rest', 0.33, 'Aturan 20-20-20')">20s Eye Rest</button>
+        <button class="preset-chip" id="chip-break" onclick="applyPreset('short_break', 5, 'Short Rest (5m)')">5m Short Break</button>
+        <button class="preset-chip" id="chip-eye" onclick="applyPreset('eye_rest', 0.33, '20-20-20 Rule')">20s Eye Rest</button>
       </div>
     </div>
 
     <div class="card">
-      <div style="font-size: 0.75rem; font-weight: 700; margin-bottom: 0.35rem;">Statistik Hari Ini</div>
+      <div style="font-size: 0.75rem; font-weight: 700; margin-bottom: 0.35rem;">Today's Statistics</div>
       <div class="stats-row">
         <div class="mini-stat">
           <div class="mini-title">Coding</div>
           <div class="mini-val" id="statCoding">${stats.totalCodingMinutes}m</div>
         </div>
         <div class="mini-stat">
-          <div class="mini-title">Istirahat</div>
+          <div class="mini-title">Break</div>
           <div class="mini-val" id="statBreak">${stats.totalBreakMinutes}m</div>
         </div>
         <div class="mini-stat">
@@ -376,25 +385,25 @@ function getPanelHtml() {
     <!-- Daily Goal & Hydration -->
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-        <span style="font-size: 0.75rem; font-weight: 700;">Target Harian</span>
-        <span style="font-size: 0.68rem; color: #34d399; font-weight: 600;" id="goalText">${stats.completedPomodoros} / ${stats.dailyGoalPomodoros || 6} Pomodoro (${stats.goalProgressPercent}%)</span>
+        <span style="font-size: 0.75rem; font-weight: 700;">Daily Goal</span>
+        <span style="font-size: 0.68rem; color: #34d399; font-weight: 600;" id="goalText">${stats.completedPomodoros} / ${stats.dailyGoalPomodoros || 6} Pomodoros (${stats.goalProgressPercent}%)</span>
       </div>
       <div style="background: #1e293b; height: 6px; border-radius: 999px; overflow: hidden;">
         <div id="goalBar" style="background: linear-gradient(90deg, #10b981, #06b6d4); height: 100%; width: ${stats.goalProgressPercent}%; transition: width 0.5s ease;"></div>
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.6rem; font-size: 0.7rem; color: var(--text-muted);">
         <div style="display: flex; align-items: center; gap: 0.3rem;">
-          <span>💧 Air:</span>
-          <strong id="waterCount" style="color: #38bdf8;">${stats.waterGlasses || 0}</strong> gelas
+          <span>💧 Water:</span>
+          <strong id="waterCount" style="color: #38bdf8;">${stats.waterGlasses || 0}</strong> glasses
         </div>
-        <button onclick="addWater()" style="background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.3); color: #38bdf8; padding: 0.2rem 0.55rem; border-radius: 4px; font-size: 0.65rem; font-weight: 600; cursor: pointer; transition: all 0.15s;">+1 Minum</button>
+        <button onclick="addWater()" style="background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.3); color: #38bdf8; padding: 0.2rem 0.55rem; border-radius: 4px; font-size: 0.65rem; font-weight: 600; cursor: pointer; transition: all 0.15s;">+1 Drink</button>
       </div>
     </div>
 
     <!-- 7-Day Trend Chart -->
     <div class="card">
       <div style="font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
-        <span>Tren 7 Hari</span>
+        <span>7-Day Trend</span>
         <span style="font-size: 0.65rem; color: #c084fc; font-weight: 600;" id="streakPill">🔥 Streak</span>
       </div>
       <div id="weeklyBars" style="display: flex; justify-content: space-between; align-items: flex-end; height: 46px; padding-top: 4px; border-bottom: 1px solid #1e293b; gap: 4px;">
@@ -404,11 +413,11 @@ function getPanelHtml() {
     </div>
 
     <div class="tip-box" id="tipCard">
-      🛡️ <strong>${tip.title}</strong><br>
-      <span id="tipAction">${tip.action}</span>
+      🛡️ <strong>${tip.titleEn || tip.title}</strong><br>
+      <span id="tipAction">${tip.actionEn || tip.action}</span>
     </div>
 
-    <div class="sync-indicator">⚡ Sinkron real-time dengan CLI & AI Agent</div>
+    <div class="sync-indicator">⚡ Synced real-time with CLI & AI Agent</div>
   </div>
 
   <script>
@@ -445,7 +454,7 @@ function getPanelHtml() {
       lastStatus = status;
 
       if (!status.active) {
-        document.getElementById('badgeText').textContent = 'SIAP';
+        document.getElementById('badgeText').textContent = 'READY';
         document.getElementById('badgeDot').style.background = '#10b981';
         document.getElementById('btnMain').style.display = 'inline-flex';
         document.getElementById('btnPause').style.display = 'none';
@@ -464,12 +473,12 @@ function getPanelHtml() {
 
       // Active session running
       const isPaused = status.isPaused;
-      document.getElementById('badgeText').textContent = isPaused ? 'DIJEDA' : status.type.toUpperCase().replace('_', ' ');
+      document.getElementById('badgeText').textContent = isPaused ? 'PAUSED' : status.type.toUpperCase().replace('_', ' ');
       document.getElementById('badgeDot').style.background = isPaused ? '#f59e0b' : (status.type === 'coding' ? '#10b981' : '#0ea5e9');
       
       document.getElementById('btnMain').style.display = 'none';
       document.getElementById('btnPause').style.display = 'inline-flex';
-      document.getElementById('btnPause').innerHTML = isPaused ? '<span>▶</span> Lanjut' : '<span>⏸</span> Jeda';
+      document.getElementById('btnPause').innerHTML = isPaused ? '<span>▶</span> Resume' : '<span>⏸</span> Pause';
       document.getElementById('btnStop').style.display = 'inline-flex';
 
       document.getElementById('modeTag').textContent = status.type.toUpperCase().replace('_', ' ');
@@ -550,7 +559,7 @@ function getPanelHtml() {
       if (!lastStatus || !lastStatus.active) {
         updateUi({ active: false });
       } else {
-        if (confirm('Sesi sedang berjalan. Ganti ke sesi baru?')) {
+        if (confirm('A session is currently running. Switch to a new session?')) {
           doStart();
         }
       }
@@ -572,7 +581,7 @@ function getPanelHtml() {
         const res = await fetch('/api/weekly');
         if (res.ok) {
           const data = await res.json();
-          document.getElementById('streakPill').textContent = '🔥 ' + data.currentStreakDays + ' Hari Streak';
+          document.getElementById('streakPill').textContent = '🔥 ' + data.currentStreakDays + ' Day Streak';
           
           const maxMin = Math.max(30, ...data.days.map(d => d.codingMinutes));
           const barsContainer = document.getElementById('weeklyBars');
