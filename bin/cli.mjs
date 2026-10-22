@@ -36,29 +36,29 @@ switch (command) {
     const task = args.slice(2).join(' ') || 'Coding Sprint';
     const status = startSession({ type: 'coding', durationMinutes: duration, task });
     printHeader();
-    console.log(`\x1b[32m✔ Sesi Coding Dimulai!\x1b[0m`);
-    console.log(`  🎯 Target Tugas : ${status.task}`);
-    console.log(`  ⏱️  Durasi       : ${status.targetDurationMinutes} Menit`);
-    console.log(`  💡 Rekomendasi  : ${status.recommendation}\n`);
+    console.log(`\x1b[32m✔ Coding Session Started!\x1b[0m`);
+    console.log(`  🎯 Task Target : ${status.task}`);
+    console.log(`  ⏱️  Duration    : ${status.targetDurationMinutes} Minutes`);
+    console.log(`  💡 Advice      : ${status.recommendation}\n`);
     break;
   }
 
   case 'break': {
     const duration = parseFloat(args[1]) || 5;
     const type = duration > 10 ? 'long_break' : 'short_break';
-    const status = startSession({ type, durationMinutes: duration, task: 'Istirahat Ergonomis' });
+    const status = startSession({ type, durationMinutes: duration, task: 'Ergonomic Break' });
     printHeader();
-    console.log(`\x1b[34m☕ Sesi Istirahat Dimulai!\x1b[0m`);
-    console.log(`  ⏱️  Durasi       : ${status.targetDurationMinutes} Menit`);
-    console.log(`  🌿 Rekomendasi  : Alihkan mata dari layar, regangkan bahu, dan minum air.\n`);
+    console.log(`\x1b[34m☕ Break Session Started!\x1b[0m`);
+    console.log(`  ⏱️  Duration    : ${status.targetDurationMinutes} Minutes`);
+    console.log(`  🌿 Advice      : Look away from screen, stretch shoulders, and drink water.\n`);
     break;
   }
 
   case 'eye': {
-    const status = startSession({ type: 'eye_rest', durationMinutes: 0.33, task: 'Aturan Mata 20-20-20' });
+    const status = startSession({ type: 'eye_rest', durationMinutes: 0.33, task: '20-20-20 Eye Rest' });
     printHeader();
-    console.log(`\x1b[35m👁️  Aturan 20-20-20 Aktif (20 Detik)!\x1b[0m`);
-    console.log(`  Tatap objek berjarak 6 meter (20 kaki) untuk mengistirahatkan saraf mata.\n`);
+    console.log(`\x1b[35m👁️  20-20-20 Rule Active (20 Seconds)!\x1b[0m`);
+    console.log(`  Look at an object 20 feet (6 meters) away to relax eye ciliary muscles.\n`);
     break;
   }
 
@@ -66,16 +66,16 @@ switch (command) {
     const status = getStatus();
     printHeader();
     if (!status.active) {
-      console.log(`  Status: \x1b[33mIDLE (Tidak ada sesi aktif)\x1b[0m`);
-      console.log(`  Hari ini: Coding ${status.todaySummary.totalCodingMinutes}m | Istirahat ${status.todaySummary.totalBreakMinutes}m | ${status.todaySummary.completedPomodoros} Pomodoro`);
+      console.log(`  Status: \x1b[33mIDLE (No active session)\x1b[0m`);
+      console.log(`  Today: Coding ${status.todaySummary.totalCodingMinutes}m | Break ${status.todaySummary.totalBreakMinutes}m | ${status.todaySummary.completedPomodoros} Pomodoro`);
       console.log(`  💡 ${status.nextRecommendation}\n`);
-      console.log(`  Ketik: \x1b[32mdevflow start 25 "Fitur Baru"\x1b[0m untuk memulai.\n`);
+      console.log(`  Type: \x1b[32mdevflow start 25 "New Feature"\x1b[0m to begin.\n`);
     } else {
       const modeColor = status.type === 'coding' ? '\x1b[32m' : '\x1b[34m';
-      console.log(`  Sesi: ${modeColor}${status.type.toUpperCase()}\x1b[0m ${status.isPaused ? '\x1b[33m(DIJEDA)\x1b[0m' : ''}`);
-      console.log(`  Tugas: ${status.task}`);
-      console.log(`  Progres: ${renderProgressBar(status.progressPercent)}`);
-      console.log(`  Waktu: ${status.elapsedFormatted} / ${status.targetDurationMinutes}:00 (Sisa: \x1b[1m${status.remainingFormatted}\x1b[0m)`);
+      console.log(`  Session: ${modeColor}${status.type.toUpperCase()}\x1b[0m ${status.isPaused ? '\x1b[33m(PAUSED)\x1b[0m' : ''}`);
+      console.log(`  Task: ${status.task}`);
+      console.log(`  Progress: ${renderProgressBar(status.progressPercent)}`);
+      console.log(`  Time: ${status.elapsedFormatted} / ${status.targetDurationMinutes}:00 (Remaining: \x1b[1m${status.remainingFormatted}\x1b[0m)`);
       console.log(`  💡 ${status.recommendation}\n`);
     }
     break;
@@ -87,7 +87,7 @@ switch (command) {
     if (res.error) {
       console.log(`  \x1b[31m✖ ${res.error}\x1b[0m\n`);
     } else {
-      console.log(`  \x1b[33m⏸ Sesi dijeda.\x1b[0m Ketik 'devflow resume' untuk melanjutkan.\n`);
+      console.log(`  \x1b[33m⏸ Session paused.\x1b[0m Type 'devflow resume' to continue.\n`);
     }
     break;
   }
@@ -98,7 +98,7 @@ switch (command) {
     if (res.error) {
       console.log(`  \x1b[31m✖ ${res.error}\x1b[0m\n`);
     } else {
-      console.log(`  \x1b[32m▶ Sesi dilanjutkan.\x1b[0m Tetap fokus!\n`);
+      console.log(`  \x1b[32m▶ Session resumed.\x1b[0m Stay focused!\n`);
     }
     break;
   }
@@ -106,28 +106,28 @@ switch (command) {
   case 'stop': {
     const res = stopSession({ completed: true });
     printHeader();
-    console.log(`  \x1b[32m⏹ Sesi diselesaikan dan dicatat ke statistik harian.\x1b[0m`);
-    console.log(`  Hari ini: Total coding ${res.todayStats.totalCodingMinutes}m | ${res.todayStats.completedPomodoros} Pomodoro selesai.\n`);
+    console.log(`  \x1b[32m⏹ Session completed and logged to daily productivity history.\x1b[0m`);
+    console.log(`  Today: Total coding ${res.todayStats.totalCodingMinutes}m | ${res.todayStats.completedPomodoros} Pomodoros completed.\n`);
     break;
   }
 
   case 'stats': {
     const stats = getDailyStats();
     printHeader();
-    console.log(`  📅 Tanggal            : ${stats.date}`);
-    console.log(`  💻 Total Waktu Coding : \x1b[32m${stats.totalCodingMinutes} menit\x1b[0m (${stats.totalCodingHours} jam)`);
-    console.log(`  ☕ Total Istirahat    : \x1b[34m${stats.totalBreakMinutes} menit\x1b[0m`);
-    console.log(`  🍅 Pomodoro Selesai   : \x1b[32m${stats.completedPomodoros} siklus\x1b[0m`);
-    console.log(`  ⚖️  Rasio Istirahat    : ${stats.breakRatioPercent}% (Target: ~20%)`);
-    console.log(`  ⭐ Skor Produktivitas : \x1b[33m${stats.productivityScore}/100\x1b[0m (${stats.focusPace})\n`);
+    console.log(`  📅 Date                : ${stats.date}`);
+    console.log(`  💻 Total Coding Time   : \x1b[32m${stats.totalCodingMinutes} minutes\x1b[0m (${stats.totalCodingHours} hours)`);
+    console.log(`  ☕ Total Break Time    : \x1b[34m${stats.totalBreakMinutes} minutes\x1b[0m`);
+    console.log(`  🍅 Completed Pomodoros : \x1b[32m${stats.completedPomodoros} cycles\x1b[0m`);
+    console.log(`  ⚖️  Break Ratio         : ${stats.breakRatioPercent}% (Target: ~20%)`);
+    console.log(`  ⭐ Productivity Score  : \x1b[33m${stats.productivityScore}/100\x1b[0m (${stats.focusPace})\n`);
     break;
   }
 
   case 'week': {
     const weekly = getWeeklyStats();
     printHeader();
-    console.log(`  📅 \x1b[1mTren 7 Hari Terakhir\x1b[0m (Total: \x1b[32m${weekly.totalWeeklyCodingMinutes}m\x1b[0m | \x1b[34m${weekly.totalWeeklyBreakMinutes}m break\x1b[0m | ${weekly.totalWeeklyPomodoros} Pomodoro)`);
-    console.log(`  🔥 Streak Fokus : \x1b[35m${weekly.currentStreakDays} Hari Berturut-turut\x1b[0m\n`);
+    console.log(`  📅 \x1b[1m7-Day Trend\x1b[0m (Total: \x1b[32m${weekly.totalWeeklyCodingMinutes}m\x1b[0m | \x1b[34m${weekly.totalWeeklyBreakMinutes}m break\x1b[0m | ${weekly.totalWeeklyPomodoros} Pomodoro)`);
+    console.log(`  🔥 Focus Streak : \x1b[35m${weekly.currentStreakDays} Consecutive Days\x1b[0m\n`);
 
     const maxMins = Math.max(30, ...weekly.days.map(d => d.codingMinutes));
     weekly.days.forEach(d => {
@@ -137,7 +137,7 @@ switch (command) {
     });
 
     if (weekly.tags && weekly.tags.length > 0) {
-      console.log(`\n  🏷️  \x1b[1mDistribusi Kategori Tugas:\x1b[0m`);
+      console.log(`\n  🏷️  \x1b[1mTask Category Distribution:\x1b[0m`);
       weekly.tags.forEach(t => {
         console.log(`     • ${t.tag.padEnd(14)} : ${t.minutes}m (${t.percent}%)`);
       });
@@ -151,8 +151,8 @@ switch (command) {
     const count = parseInt(args[1], 10);
     if (!count) {
       const stats = getDailyStats();
-      console.log(`  🎯 Target Harian : ${stats.completedPomodoros} / ${stats.dailyGoalPomodoros || 6} Pomodoro (${stats.goalProgressPercent}%)`);
-      console.log(`  Gunakan: \x1b[32mdevflow goal 8\x1b[0m untuk mengubah target.\n`);
+      console.log(`  🎯 Daily Goal : ${stats.completedPomodoros} / ${stats.dailyGoalPomodoros || 6} Pomodoros (${stats.goalProgressPercent}%)`);
+      console.log(`  Use: \x1b[32mdevflow goal 8\x1b[0m to update target.\n`);
     } else {
       const res = setDailyGoal(count);
       console.log(`  \x1b[32m✔ ${res.message}\x1b[0m\n`);
@@ -170,12 +170,12 @@ switch (command) {
   case 'log': {
     printHeader();
     const stats = getDailyStats();
-    console.log(`  📋 \x1b[1mRiwayat Sesi Coding Hari Ini (${stats.date})\x1b[0m`);
+    console.log(`  📋 \x1b[1mToday's Session History (${stats.date})\x1b[0m`);
     if (!stats.recentSessions || stats.recentSessions.length === 0) {
-      console.log(`     (Belum ada sesi yang selesai hari ini)\n`);
+      console.log(`     (No completed sessions today yet)\n`);
     } else {
       stats.recentSessions.forEach((s, idx) => {
-        const timeStr = s.startTimestamp ? new Date(s.startTimestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+        const timeStr = s.startTimestamp ? new Date(s.startTimestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--';
         const statusEmoji = s.completed ? '✔' : '✖';
         console.log(`     ${idx + 1}. [${timeStr}] ${statusEmoji} ${s.type.toUpperCase().padEnd(11)} : ${s.task} (${s.actualElapsedMinutes}m) [tag: ${s.tag}]`);
       });
@@ -186,10 +186,10 @@ switch (command) {
 
   case 'dashboard': {
     printHeader();
-    console.log(`  🚀 Membuka Cockpit Dashboard visual di browser...`);
+    console.log(`  🚀 Launching visual Cockpit Dashboard in browser...`);
     const res = saveAndOpenDashboard();
     console.log(`  File: ${res.filePath}`);
-    console.log(`  \x1b[32m✔ Dashboard siap digunakan.\x1b[0m\n`);
+    console.log(`  \x1b[32m✔ Dashboard ready.\x1b[0m\n`);
     break;
   }
 
@@ -197,7 +197,7 @@ switch (command) {
     printHeader();
     const rep = exportReportToFile();
     console.log(rep.summary.markdownReport);
-    console.log(`\x1b[32m✔ Laporan lengkap tersimpan di: ${rep.filePath}\x1b[0m\n`);
+    console.log(`\x1b[32m✔ Full report saved at: ${rep.filePath}\x1b[0m\n`);
     break;
   }
 
@@ -205,14 +205,14 @@ switch (command) {
     printHeader();
     const git = getGitContext();
     if (!git.isGitRepo) {
-      console.log(`  \x1b[33mFolder saat ini bukan repositori Git.\x1b[0m\n`);
+      console.log(`  \x1b[33mCurrent folder is not a Git repository.\x1b[0m\n`);
     } else {
-      console.log(`  🌿 Cabang Git Aktif  : \x1b[36m${git.branch}\x1b[0m`);
-      console.log(`  📝 File Dimodifikasi : ${git.changedFilesCount} file`);
+      console.log(`  🌿 Active Git Branch  : \x1b[36m${git.branch}\x1b[0m`);
+      console.log(`  📝 Modified Files     : ${git.changedFilesCount} files`);
       if (git.changedFiles.length > 0) {
         git.changedFiles.forEach(f => console.log(`     • ${f}`));
       }
-      console.log(`\n  Ketik: \x1b[32mdevflow start 25 "${git.suggestedTask}"\x1b[0m untuk memulai fokus pada cabang ini.\n`);
+      console.log(`\n  Type: \x1b[32mdevflow start 25 "${git.suggestedTask}"\x1b[0m to begin focusing on this branch.\n`);
     }
     break;
   }
@@ -261,28 +261,28 @@ switch (command) {
     const cat = args[1] || null;
     const tip = getErgonomicTip(cat);
     printHeader();
-    console.log(`  🛡️  \x1b[36m${tip.title}\x1b[0m`);
-    console.log(`  ${tip.description}`);
-    console.log(`  \x1b[32m💡 Aksi: ${tip.action}\x1b[0m\n`);
+    console.log(`  🛡️  \x1b[36m${tip.titleEn || tip.title}\x1b[0m`);
+    console.log(`  ${tip.descriptionEn || tip.description}`);
+    console.log(`  \x1b[32m💡 Action: ${tip.actionEn || tip.action}\x1b[0m\n`);
     break;
   }
 
   default:
     printHeader();
-    console.log(`  Perintah yang tersedia:`);
-    console.log(`    start [menit] [tugas]  - Mulai sesi coding fokus (default: 25m)`);
-    console.log(`    break [menit]          - Mulai istirahat (default: 5m)`);
-    console.log(`    eye                    - Aturan 20-20-20 relaksasi mata (20 detik)`);
-    console.log(`    status                 - Cek status timer dan sisa waktu`);
-    console.log(`    pause / resume         - Jeda atau lanjutkan timer`);
-    console.log(`    stop                   - Selesaikan sesi dan simpan ke riwayat`);
-    console.log(`    stats                  - Lihat ringkasan metrik produktivitas harian`);
-    console.log(`    week                   - Grafik tren produktivitas 7 hari & distribusi tag`);
-    console.log(`    goal [jumlah]          - Atur target jumlah siklus Pomodoro harian`);
-    console.log(`    water                  - Catat 1 gelas air hidrasi (+1 gelas)`);
-    console.log(`    log                    - Lihat tabel log riwayat sesi hari ini`);
-    console.log(`    report                 - Buat dan ekspor laporan analitik produktivitas (Markdown)`);
-    console.log(`    git                    - Periksa konteks cabang Git & rekomendasi tugas fokus`);
-    console.log(`    dashboard              - Buka Cockpit visual di browser`);
-    console.log(`    tip [kategori]         - Tips ergonomis (eyes, posture, hands, back)\n`);
+    console.log(`  Available commands:`);
+    console.log(`    start [minutes] [task]  - Start focus coding session (default: 25m)`);
+    console.log(`    break [minutes]         - Start break session (default: 5m)`);
+    console.log(`    eye                     - 20-20-20 eye relief rule (20 seconds)`);
+    console.log(`    status                  - Check timer status and remaining time`);
+    console.log(`    pause / resume          - Pause or resume running timer`);
+    console.log(`    stop                    - End active session and save to history`);
+    console.log(`    stats                   - View daily productivity metrics`);
+    console.log(`    week                    - 7-day productivity trend chart & tag distribution`);
+    console.log(`    goal [count]            - Set daily target Pomodoro cycles`);
+    console.log(`    water                   - Log 1 glass of water intake (+1 glass)`);
+    console.log(`    log                     - View session history log for today`);
+    console.log(`    report                  - Generate and export productivity report (Markdown)`);
+    console.log(`    git                     - Inspect Git branch context & suggested focus task`);
+    console.log(`    dashboard               - Open visual HTML cockpit in browser`);
+    console.log(`    tip [category]          - Ergonomic tips (eyes, posture, hands, back, health, mind)\n`);
 }

@@ -6,71 +6,64 @@
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org)
 [![Author](https://img.shields.io/badge/Author-Roedy_Rustam-cyan.svg)](https://github.com/roedyrustam)
 
-> **Penghitung & Pelacak Durasi Waktu Coding dan Istirahat Cerdas untuk Antigravity AI**  
+> **Intelligent Coding Duration Tracker & Ergonomic Break Sentinel for Antigravity AI**  
 > *Sustain High Productivity, Eliminate Mental Fatigue, and Protect Developer Health.*
 
 ---
 
-## 🚀 Panduan Instalasi Cepat (Quick Installation)
+## 🚀 Quick Installation
 
-Pengembang mana pun dapat memasang plugin ini dengan **1 baris perintah saja**:
+Any developer can install this plugin with a single command:
 
 ### A. Windows (PowerShell)
-Buka terminal PowerShell dan jalankan:
+Open PowerShell and run:
 ```powershell
 irm https://raw.githubusercontent.com/roedyrustam/dev-flow-timer/main/install.ps1 | iex
 ```
 
 ### B. macOS & Linux (Bash / Zsh)
-Buka terminal dan jalankan:
+Open terminal and run:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/roedyrustam/dev-flow-timer/main/install.sh | bash
 ```
 
-### C. Manual via Git Clone
+### C. Manual Installation via Git Clone
 ```bash
-# Clone langsung ke direktori plugin Antigravity
+# Clone directly into the Antigravity plugins directory
 git clone https://github.com/roedyrustam/dev-flow-timer.git ~/.gemini/config/plugins/dev-flow-timer
 
-# Inisialisasi CLI launcher
+# Run the installer setup
 node ~/.gemini/config/plugins/dev-flow-timer/bin/cli.mjs install
 ```
 
-Setelah instalasi selesai, cukup **restart Antigravity** dan buka menu `Overview > Plugins > DevFlow Timer`!
+Once installed, **restart Antigravity** and open `Overview > Plugins > DevFlow Timer`!
 
 ---
 
-**DevFlow** adalah plugin terpadu untuk Antigravity yang dirancang khusus untuk memonitor durasi coding dan mengatur ritme istirahat terencana. Terinspirasi dari riset neurosains dan ergonomi modern, produktivitas terbaik diraih bukan dengan bekerja berjam-jam tanpa henti (*burnout trap*), melainkan melalui ritme gelombang fokus tinggi (*Deep Work*) yang diimbangi dengan jeda pemulihan terstruktur (*Active Recovery*).
+## 📖 Overview
 
-### ✨ Fitur Utama
-1. **Multi-Mode Timer Ilmiah**:
-   - 🍅 **Pomodoro Klasik (25m Fokus / 5m Istirahat)**: Cocok untuk implementasi harian dan sprint terarah.
-   - 🧠 **Ritme Ultradian (50m Deep Work / 10m Istirahat)**: Dirancang untuk arsitektur kompleks dan debugging intensif.
-   - 👁️ **Aturan 20-20-20 (Eye Relief 20s)**: Mengistirahatkan otot siliaris mata setiap 20 menit menatap layar.
-   - ☕ **Istirahat Panjang (15m–30m)**: Reset menyeluruh setiap 4 siklus Pomodoro selesai.
-2. **Cockpit Dashboard Visual Interaktif**:
-   - Antarmuka web modern dengan circular ring SVG real-time.
-   - Web Audio Synthesizer: Chime bel harmonik 528Hz ramah telinga tanpa perlu file audio eksternal.
-   - Panel metrik harian (total menit coding, menit istirahat, rasio kerja, skor ritme).
-3. **9 Alat MCP Native (Model Context Protocol)**:
-   - Agen AI dapat mengontrol, memeriksa, menjeda, dan menyarankan istirahat secara otonom.
-4. **Ergonomic Sentinel & Tips Cepat**:
-   - Panduan peregangan leher (*chin tuck*), pergelangan tangan (*carpal tunnel prevention*), pinggang, dan pengingat hidrasi air putih.
-5. **CLI Terintegrasi**:
-   - Dapat dioperasikan langsung dari terminal/PowerShell dengan sintaks ringkas: `node bin/cli.mjs start 25`.
+**DevFlow** is a comprehensive productivity and ergonomic pacing plugin for Antigravity AI. Grounded in neuroscience and ergonomic research, peak cognitive performance is achieved not through marathon non-stop sessions (*burnout trap*), but through an oscillating rhythm of high-intensity focus blocks (*Deep Work*) balanced by deliberate restorative breaks (*Active Recovery*).
 
----
-
-## 🇬🇧 Overview (English)
-
-**DevFlow** is a comprehensive productivity and ergonomic pacing plugin for Antigravity AI. It helps engineers balance high-output coding blocks with restorative recovery periods to maintain sustainable focus and eliminate cognitive fatigue.
-
-### Core Architecture
-- **State Store**: Persistent, thread-safe JSON store (`~/.gemini/antigravity/devflow-state.json`).
-- **MCP Server**: Pure Node.js stdio server implementing Model Context Protocol v1.x with 9 dedicated tools and 2 live resources.
-- **Visual Cockpit**: Standalone single-file HTML5 app with Web Audio synthesis and local time synchronization.
-- **Flow Coach Subagent**: Dedicated companion persona assisting developers during long sessions.
-- **Lifecycle Hooks**: Automatically updates activity heartbeats and reports session status on startup.
+### ✨ Core Features
+1. **Scientific Multi-Mode Pacing**:
+   - 🍅 **Classic Pomodoro (25m Focus / 5m Rest)**: Ideal for daily feature implementation, refactoring, and focused task tickets.
+   - 🧠 **Ultradian Rhythm (50m Deep Work / 10m Rest)**: Designed for complex architectural decisions, algorithmic debugging, and system specs.
+   - 👁️ **20-20-20 Rule (20s Eye Relief)**: Relaxes ciliary eye muscles every 20 minutes to prevent digital eye strain.
+   - ☕ **Long Break (15m–30m)**: Complete cognitive reset every 4 completed Pomodoro cycles.
+2. **Interactive Visual Cockpit Dashboard**:
+   - Standalone HTML5 web application with real-time SVG circular progress ring.
+   - Web Audio Synthesizer: 528Hz Solfeggio harmonic bell chime with zero external audio dependencies.
+   - Daily performance metrics: focus time, rest duration, work ratio, and rhythm score.
+3. **Embedded Sidecar UI Panel**:
+   - Integrated auxiliary pane inside Antigravity IDE (`sidecars/devflow-panel`).
+   - Live synchronization with CLI commands and AI agent tool calls.
+   - Daily Pomodoro goal progress bar, hydration logger, and 7-day trend sparklines.
+4. **14 Native MCP Tools (Model Context Protocol v1.x)**:
+   - Enables AI agents to autonomously manage timers, evaluate workload duration, log water intake, and suggest pacing pauses.
+5. **Flow Coach Companion Subagent**:
+   - Dedicated persona providing empathetic, science-backed ergonomic guidance during long sessions.
+6. **Cross-Platform CLI Launcher**:
+   - Operable directly from terminal or PowerShell via `devflow` commands.
 
 ---
 
@@ -78,79 +71,108 @@ Setelah instalasi selesai, cukup **restart Antigravity** dan buka menu `Overview
 
 | Tool Name | Parameters | Description |
 | :--- | :--- | :--- |
-| `devflow_start_timer` | `type`, `duration_minutes`, `task`, `tag` | Starts a focus coding sprint or break session |
+| `devflow_start_timer` | `type`, `duration_minutes`, `task`, `tag` | Starts a focus coding sprint or restorative break session |
 | `devflow_get_status` | *(none)* | Returns current session status, remaining time, and pacing advice |
 | `devflow_pause_timer` | *(none)* | Temporarily pauses the running timer |
 | `devflow_resume_timer` | *(none)* | Resumes the paused timer |
 | `devflow_stop_timer` | `completed`, `reason` | Completes/stops active session and logs to daily history |
-| `devflow_get_stats` | *(none)* | Returns today's metrics: total coding time, break ratio, score |
+| `devflow_get_stats` | *(none)* | Returns today's metrics: total coding time, break ratio, and score |
 | `devflow_open_dashboard` | *(none)* | Generates and launches the visual HTML cockpit in your default browser |
-| `devflow_get_ergonomic_tip`| `category` | Provides quick actionable stretch/health exercises for developers |
-| `devflow_configure` | `pomodoro_minutes`, etc. | Customizes default timer intervals |
+| `devflow_get_ergonomic_tip` | `category` | Provides quick actionable stretch/health exercises for developers |
+| `devflow_configure` | `pomodoro_minutes`, etc. | Customizes default timer intervals and durations |
+| `devflow_generate_report` | `save_to_file` | Exports comprehensive productivity and ergonomic report in Markdown |
+| `devflow_git_context` | *(none)* | Inspects active Git branch and generates conventional commit suggestions |
+| `devflow_get_weekly_stats` | *(none)* | Retrieves 7-day trend, active streak, and tag breakdown |
+| `devflow_log_water` | *(none)* | Logs 1 glass of water intake to track cellular hydration |
+| `devflow_set_goal` | `goal_pomodoros` | Sets target number of daily Pomodoro cycles |
 
 ---
 
 ## 💻 CLI Usage (Terminal / PowerShell)
 
-Anda dapat menjalankan perintah langsung melalui terminal:
+Run commands directly from any terminal or PowerShell prompt:
 
 ```bash
-# Mulai sesi Pomodoro 25 menit
-node "C:\Users\roedy\.gemini\config\plugins\dev-flow-timer\bin\cli.mjs" start 25 "Refactor Auth Middleware"
+# Start a 25-minute Pomodoro focus sprint
+devflow start 25 "Refactor Authentication Middleware"
 
-# Mulai istirahat singkat 5 menit
-node "C:\Users\roedy\.gemini\config\plugins\dev-flow-timer\bin\cli.mjs" break 5
+# Start a 5-minute short break
+devflow break 5
 
-# Jalankan aturan mata 20-20-20
-node "C:\Users\roedy\.gemini\config\plugins\dev-flow-timer\bin\cli.mjs" eye
+# Trigger 20-20-20 eye relief (20 seconds)
+devflow eye
 
-# Cek status dan sisa waktu
-node "C:\Users\roedy\.gemini\config\plugins\dev-flow-timer\bin\cli.mjs" status
+# Check current status and remaining time
+devflow status
 
-# Buka Dashboard Cockpit visual di browser
-node "C:\Users\roedy\.gemini\config\plugins\dev-flow-timer\bin\cli.mjs" dashboard
+# Open visual Cockpit Dashboard in browser
+devflow dashboard
 
-# Lihat statistik harian
-node "C:\Users\roedy\.gemini\config\plugins\dev-flow-timer\bin\cli.mjs" stats
+# View daily productivity metrics
+devflow stats
 
-# Dapatkan tips peregangan
-node "C:\Users\roedy\.gemini\config\plugins\dev-flow-timer\bin\cli.mjs" tip posture
+# View 7-day productivity trend and tag distribution
+devflow week
+
+# Set daily Pomodoro goal
+devflow goal 8
+
+# Log a glass of water
+devflow water
+
+# Generate full Markdown report
+devflow report
+
+# Get ergonomic stretching tips
+devflow tip posture
 ```
 
 ---
 
-## 📂 Struktur Direktori Plugin
+## 📂 Plugin Directory Structure
 
 ```text
 ~/.gemini/config/plugins/dev-flow-timer/
-├── plugin.json                 # Manifest plugin (metadata & suggested prompts)
-├── README.md                   # Dokumentasi lengkap
-├── mcp_config.json             # Pendaftaran MCP server lokal
+├── plugin.json                 # Plugin manifest & suggested prompts
+├── README.md                   # Comprehensive documentation
+├── mcp_config.json             # Local MCP server registration
 ├── hooks.json                  # Lifecycle hooks (SessionStart & PostToolUse)
 ├── assets/
-│   └── logo.svg                # Logo vektor high-contrast (Dark/Light mode)
+│   └── logo.svg                # High-contrast vector icon (Dark/Light mode)
 ├── bin/
-│   ├── mcp-server.mjs          # Server MCP v1.x stdio (Zero dependencies)
-│   └── cli.mjs                 # CLI interaktif untuk terminal
+│   ├── mcp-server.mjs          # Native stdio MCP v1.x server
+│   └── cli.mjs                 # Interactive CLI tool for terminal
 ├── lib/
-│   ├── timer-engine.mjs        # Mesin state & kalkulasi metrik ergonomis
-│   └── dashboard-generator.mjs # Generator Cockpit HTML + Web Audio Chime
+│   ├── timer-engine.mjs        # Core timer state engine & metric calculations
+│   ├── dashboard-generator.mjs # Visual HTML cockpit generator with Web Audio chime
+│   ├── analytics-reporter.mjs  # Markdown productivity & ergonomic reports
+│   ├── git-integrator.mjs      # Git branch context & commit generator
+│   └── notifier.mjs            # Cross-platform desktop notifications
+├── sidecars/
+│   └── devflow-panel/          # Sidecar UI server & embedded auxiliary pane
 ├── skills/
 │   └── coding-break-timer/
-│       └── SKILL.md            # Panduan keahlian AI untuk ritme kerja
+│       └── SKILL.md            # Agent skill guide for pacing & ergonomics
 ├── agents/
-│   └── flow-coach.md           # Definisi subagent Flow Coach
+│   └── flow-coach.md           # Flow Coach companion subagent
 ├── rules/
-│   └── AGENTS.md               # Aturan kesadaran ritme & anti-burnout
+│   └── AGENTS.md               # Universal pacing & anti-burnout guidelines
 └── scripts/
-    └── hook-handler.mjs        # Handler eksekusi event lifecycle
+    ├── hook-handler.mjs        # Lifecycle event execution handler
+    └── notify.ps1              # Windows Toast notification script
 ```
 
 ---
 
-## 🌿 Ergonomic & Health Reference
+## 🌿 Ergonomic & Health Guidelines
 
-1. **Aturan 20-20-20**: Setiap 20 menit, tatap objek 6 meter jauhnya selama 20 detik.
-2. **De-stress Leher**: Tarik dagu ke belakang (*chin tuck*) 5 detik untuk meredakan beban serviks.
-3. **Pencegahan Carpal Tunnel**: Lenturkan pergelangan tangan ke depan dan belakang setiap jeda 5 menit.
-4. **Hidrasi Otak**: 1 gelas air putih di setiap siklus Pomodoro menjaga kecepatan transmisi sinapsis.
+1. **20-20-20 Rule**: Every 20 minutes, focus on an object 20 feet (6 meters) away for 20 seconds.
+2. **Cervical De-stress**: Perform gentle chin tucks for 5 seconds to reduce cervical spine tension.
+3. **Carpal Tunnel Defense**: Flex and extend wrists during each 5-minute break.
+4. **Hydration**: Drink 1 glass of water per Pomodoro cycle to maintain neurotransmitter efficiency.
+
+---
+
+## 📄 License
+
+MIT © [Roedy Rustam](https://github.com/roedyrustam)
