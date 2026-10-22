@@ -1,0 +1,11 @@
+{
+  "name": "dev-flow-timer",
+  "description": "Smart timer and rhythm tracker for coding duration, ergonomic breaks, and developer productivity for Antigravity AI.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Roedy Rustam",
+    "email": "roedyrustam.id@gmail.com"
+  },
+  "homepage": "https://github.com/roedyrustam/dev-flow-timer",
+  "repository": "https://github.com/roedyrustam/dev-flow-timer.git"
+}

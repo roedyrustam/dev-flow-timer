@@ -11,7 +11,34 @@
 
 ---
 
-## 🇮🇩 Ringkasan (Bahasa Indonesia)
+## 🚀 Panduan Instalasi Cepat (Quick Installation)
+
+Pengembang mana pun dapat memasang plugin ini dengan **1 baris perintah saja**:
+
+### A. Windows (PowerShell)
+Buka terminal PowerShell dan jalankan:
+```powershell
+irm https://raw.githubusercontent.com/roedyrustam/dev-flow-timer/main/install.ps1 | iex
+```
+
+### B. macOS & Linux (Bash / Zsh)
+Buka terminal dan jalankan:
+```bash
+curl -fsSL https://raw.githubusercontent.com/roedyrustam/dev-flow-timer/main/install.sh | bash
+```
+
+### C. Manual via Git Clone
+```bash
+# Clone langsung ke direktori plugin Antigravity
+git clone https://github.com/roedyrustam/dev-flow-timer.git ~/.gemini/config/plugins/dev-flow-timer
+
+# Inisialisasi CLI launcher
+node ~/.gemini/config/plugins/dev-flow-timer/bin/cli.mjs install
+```
+
+Setelah instalasi selesai, cukup **restart Antigravity** dan buka menu `Overview > Plugins > DevFlow Timer`!
+
+---
 
 **DevFlow** adalah plugin terpadu untuk Antigravity yang dirancang khusus untuk memonitor durasi coding dan mengatur ritme istirahat terencana. Terinspirasi dari riset neurosains dan ergonomi modern, produktivitas terbaik diraih bukan dengan bekerja berjam-jam tanpa henti (*burnout trap*), melainkan melalui ritme gelombang fokus tinggi (*Deep Work*) yang diimbangi dengan jeda pemulihan terstruktur (*Active Recovery*).
 

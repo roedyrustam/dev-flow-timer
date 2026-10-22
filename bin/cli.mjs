@@ -153,6 +153,46 @@ switch (command) {
     break;
   }
 
+  case 'install': {
+    printHeader();
+    const os = await import('node:os');
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    const geminiDir = path.join(os.homedir(), '.gemini');
+    const binDir = path.join(geminiDir, 'antigravity', 'bin');
+    const configFile = path.join(geminiDir, 'config', 'config.json');
+
+    try {
+      if (!fs.existsSync(binDir)) fs.mkdirSync(binDir, { recursive: true });
+      if (os.platform() === 'win32') {
+        const cmdPath = path.join(binDir, 'devflow.cmd');
+        const scriptPath = path.resolve(process.argv[1]);
+        fs.writeFileSync(cmdPath, `@echo off\r\nnode "${scriptPath}" %*\r\n`, 'ascii');
+        console.log(`  \x1b[32m✔ Global CLI launcher installed at: ${cmdPath}\x1b[0m`);
+      } else {
+        const linkPath = path.join(binDir, 'devflow');
+        const scriptPath = path.resolve(process.argv[1]);
+        try { fs.unlinkSync(linkPath); } catch(e) {}
+        fs.symlinkSync(scriptPath, linkPath);
+        console.log(`  \x1b[32m✔ Symlink installed at: ${linkPath}\x1b[0m`);
+      }
+
+      if (fs.existsSync(configFile)) {
+        const raw = fs.readFileSync(configFile, 'utf8');
+        const cfg = JSON.parse(raw || '{}');
+        if (!cfg.plugins) cfg.plugins = {};
+        if (!cfg.plugins['dev-flow-timer']) cfg.plugins['dev-flow-timer'] = {};
+        cfg.plugins['dev-flow-timer'].enabled = true;
+        fs.writeFileSync(configFile, JSON.stringify(cfg, null, 2), 'utf8');
+        console.log(`  \x1b[32m✔ Plugin enabled in config.json\x1b[0m`);
+      }
+      console.log(`\n  \x1b[32m🎉 DevFlow Timer setup complete! Restart Antigravity to refresh.\x1b[0m\n`);
+    } catch (err) {
+      console.log(`  \x1b[31m✖ Setup error: ${err.message}\x1b[0m\n`);
+    }
+    break;
+  }
+
   case 'tip': {
     const cat = args[1] || null;
     const tip = getErgonomicTip(cat);
