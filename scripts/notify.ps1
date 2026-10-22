@@ -1,6 +1,6 @@
 param (
   [string]$Title = "DevFlow Timer",
-  [string]$Message = "Sesi Pomodoro Selesai!"
+  [string]$Message = "Pomodoro Session Completed!"
 )
 
 try {

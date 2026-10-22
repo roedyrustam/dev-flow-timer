@@ -8,9 +8,9 @@ try {
   if (action === 'session-start') {
     const status = getStatus();
     if (status.active) {
-      process.stdout.write(`[DevFlow Timer] Sesi aktif terdeteksi: ${status.type.toUpperCase()} (${status.remainingFormatted} tersisa). Pertahankan fokus!\n`);
+      process.stdout.write(`[DevFlow Timer] Active session detected: ${status.type.toUpperCase()} (${status.remainingFormatted} remaining). Stay focused!\n`);
     } else {
-      process.stdout.write(`[DevFlow Timer] Siap mendampingi sprint coding. Ketik "/ask-skill coding-break-timer" atau gunakan perintah devflow untuk mengaktifkan ritme fokus.\n`);
+      process.stdout.write(`[DevFlow Timer] Ready to pace your coding sprint. Use 'devflow' commands or ask the agent to start a focus timer.\n`);
     }
   } else if (action === 'post-tool') {
     recordActivity('tool_use');

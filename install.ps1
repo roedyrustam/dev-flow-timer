@@ -4,17 +4,17 @@
 $ErrorActionPreference = "Stop"
 
 Write-Host ""
-Write-Host "⚡ [DevFlow Timer] Memulai instalasi otomatis..." -ForegroundColor Cyan
+Write-Host "⚡ [DevFlow Timer] Starting automatic installation..." -ForegroundColor Cyan
 
 # 1. Check Node.js
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
-    Write-Host "✖ Node.js tidak ditemukan! Silakan install Node.js (>=20) dari https://nodejs.org" -ForegroundColor Red
+    Write-Host "✖ Node.js not found! Please install Node.js (>=20) from https://nodejs.org" -ForegroundColor Red
     exit 1
 }
 
 # 2. Check Git
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-    Write-Host "✖ Git tidak ditemukan! Silakan install Git dari https://git-scm.com" -ForegroundColor Red
+    Write-Host "✖ Git not found! Please install Git from https://git-scm.com" -ForegroundColor Red
     exit 1
 }
 
@@ -29,10 +29,10 @@ if (-not (Test-Path $pluginsDir)) {
 }
 
 if (Test-Path $targetDir) {
-    Write-Host "🔄 Plugin sudah terpasang. Memperbarui ke versi terbaru..." -ForegroundColor Yellow
+    Write-Host "🔄 Plugin already installed. Updating to latest version..." -ForegroundColor Yellow
     git -C $targetDir pull origin main
 } else {
-    Write-Host "📥 Mengunduh plugin dari GitHub..." -ForegroundColor Cyan
+    Write-Host "📥 Downloading plugin from GitHub..." -ForegroundColor Cyan
     git clone $repoUrl $targetDir
 }
 
@@ -60,17 +60,17 @@ try {
     if (-not $cfg.plugins["dev-flow-timer"]) { $cfg.plugins["dev-flow-timer"] = @{} }
     $cfg.plugins["dev-flow-timer"]["enabled"] = $true
     $cfg | ConvertTo-Json -Depth 5 | Set-Content $configFile -Encoding UTF8
-    Write-Host "✔ Plugin berhasil diaktifkan di konfigurasi Antigravity." -ForegroundColor Green
+    Write-Host "✔ Plugin successfully enabled in Antigravity config." -ForegroundColor Green
 } catch {
-    Write-Host "⚠ Catatan: Aktifkan plugin via Settings > Plugins jika diperlukan." -ForegroundColor Yellow
+    Write-Host "⚠ Note: Enable the plugin via Settings > Plugins if needed." -ForegroundColor Yellow
 }
 
 # 6. Success message
 Write-Host ""
-Write-Host "🎉 DevFlow Timer Berhasil Terpasang!" -ForegroundColor Green
+Write-Host "🎉 DevFlow Timer Successfully Installed!" -ForegroundColor Green
 Write-Host "--------------------------------------------------------" -ForegroundColor DarkGray
-Write-Host "👉 Terminal CLI : Ketik 'devflow status' atau 'devflow start 25'" -ForegroundColor Cyan
-Write-Host "👉 Sidecar UI   : Buka menu Overview > Plugins > DevFlow Timer" -ForegroundColor Cyan
-Write-Host "👉 Dashboard    : Ketik 'devflow dashboard' untuk membuka cockpit" -ForegroundColor Cyan
+Write-Host "👉 Terminal CLI : Run 'devflow status' or 'devflow start 25'" -ForegroundColor Cyan
+Write-Host "👉 Sidecar UI   : Open Overview > Plugins > DevFlow Timer" -ForegroundColor Cyan
+Write-Host "👉 Dashboard    : Run 'devflow dashboard' to open the cockpit" -ForegroundColor Cyan
 Write-Host "--------------------------------------------------------" -ForegroundColor DarkGray
-Write-Host "Silakan restart Antigravity atau buka workspace baru untuk memuat tools secara penuh.`n"
+Write-Host "Please restart Antigravity or open a new workspace to fully load tools.`n"

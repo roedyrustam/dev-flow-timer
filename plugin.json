@@ -5,8 +5,8 @@
   "version": "1.0.0",
   "logo": "assets/logo.svg",
   "suggestedPrompts": [
-    "Mulai sesi fokus coding 25 menit (Pomodoro) dengan target tugas saat ini",
-    "Cek sisa durasi sesi coding dan rekomendasi istirahat yang tepat",
-    "Buka dashboard visual produktivitas dan riwayat sesi coding & istirahat hari ini"
+    "Start a 25-minute Pomodoro focus sprint with the current task target",
+    "Check remaining session duration and get ergonomic pacing advice",
+    "Open the visual productivity dashboard and review today's coding & break history"
   ]
 }
