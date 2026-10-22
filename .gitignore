@@ -1,0 +1,8 @@
+node_modules/
+*.log
+*.tmp
+devflow-state.json
+devflow-dashboard.html
+PRODUCTIVITY_REPORT.md
+.DS_Store
+Thumbs.db

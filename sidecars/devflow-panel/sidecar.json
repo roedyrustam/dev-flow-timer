@@ -1,0 +1,20 @@
+{
+  "display_name": "DevFlow Timer",
+  "description": "Smart Coding Rhythm & Ergonomic Break Timer Cockpit",
+  "command": "node",
+  "args": [
+    "C:\\Users\\roedy\\.gemini\\config\\plugins\\dev-flow-timer\\sidecars\\devflow-panel\\server.mjs"
+  ],
+  "has_web_ui": true,
+  "restart_policy": "always",
+  "ui_config": {
+    "display_name": "DevFlow Timer",
+    "views": [
+      {
+        "title": "DevFlow Timer",
+        "entrypoint": "SIDECAR_UI_ENTRYPOINT_AUX_PANE",
+        "path": "/"
+      }
+    ]
+  }
+}

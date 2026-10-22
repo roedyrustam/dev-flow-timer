@@ -1,0 +1,30 @@
+{
+  "devflow-rhythm": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "node ./scripts/hook-handler.mjs session-start"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "write_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ./scripts/hook-handler.mjs post-tool"
+          }
+        ]
+      },
+      {
+        "matcher": "edit_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ./scripts/hook-handler.mjs post-tool"
+          }
+        ]
+      }
+    ]
+  }
+}

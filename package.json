@@ -1,0 +1,42 @@
+{
+  "name": "dev-flow-timer",
+  "version": "1.0.0",
+  "description": "Smart timer and rhythm tracker for coding duration, ergonomic breaks, and developer productivity for Antigravity AI (Sidecar UI + MCP Tools + Pomodoro).",
+  "main": "bin/mcp-server.mjs",
+  "type": "module",
+  "bin": {
+    "devflow": "./bin/cli.mjs"
+  },
+  "scripts": {
+    "start": "node bin/cli.mjs start",
+    "status": "node bin/cli.mjs status",
+    "dashboard": "node bin/cli.mjs dashboard",
+    "mcp": "node bin/mcp-server.mjs",
+    "report": "node bin/cli.mjs report",
+    "test": "node --check bin/cli.mjs && node --check bin/mcp-server.mjs && node --check sidecars/devflow-panel/server.mjs"
+  },
+  "keywords": [
+    "antigravity",
+    "plugin",
+    "pomodoro",
+    "timer",
+    "ergonomics",
+    "developer-productivity",
+    "sidecar",
+    "mcp-server",
+    "model-context-protocol"
+  ],
+  "author": "Roedy Rustam <roedyrustam.id@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roedyrustam/dev-flow-timer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/roedyrustam/dev-flow-timer/issues"
+  },
+  "homepage": "https://github.com/roedyrustam/dev-flow-timer#readme",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

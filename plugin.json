@@ -1,0 +1,12 @@
+{
+  "name": "dev-flow-timer",
+  "displayName": "DevFlow - Coding & Break Timer",
+  "description": "Smart timer and rhythm tracker for coding duration, ergonomic breaks, and developer productivity (Pomodoro, 20-20-20 eye rest, and energy pacing).",
+  "version": "1.0.0",
+  "logo": "assets/logo.svg",
+  "suggestedPrompts": [
+    "Mulai sesi fokus coding 25 menit (Pomodoro) dengan target tugas saat ini",
+    "Cek sisa durasi sesi coding dan rekomendasi istirahat yang tepat",
+    "Buka dashboard visual produktivitas dan riwayat sesi coding & istirahat hari ini"
+  ]
+}

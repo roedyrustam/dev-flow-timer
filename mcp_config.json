@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "devflow-timer": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\roedy\\.gemini\\config\\plugins\\dev-flow-timer\\bin\\mcp-server.mjs"
+      ]
+    }
+  }
+}
