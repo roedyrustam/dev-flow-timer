@@ -14,6 +14,9 @@ import {
   stopSession,
   getStatus,
   getDailyStats,
+  getWeeklyStats,
+  logWater,
+  setDailyGoal,
   getErgonomicTip,
   updatePreferences,
   recordActivity
@@ -153,6 +156,36 @@ export const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {}
+    }
+  },
+  {
+    name: 'devflow_get_weekly_stats',
+    description: 'Ambil statistik produktivitas 7 hari terakhir: total durasi per hari, streak aktif, dan distribusi kategori tag kerja.',
+    inputSchema: {
+      type: 'object',
+      properties: {}
+    }
+  },
+  {
+    name: 'devflow_log_water',
+    description: 'Catat konsumsi 1 gelas air putih (hidrasi seluler) untuk menjaga stamina kognitif saat coding.',
+    inputSchema: {
+      type: 'object',
+      properties: {}
+    }
+  },
+  {
+    name: 'devflow_set_goal',
+    description: 'Atur target jumlah siklus Pomodoro yang ingin dicapai dalam satu hari kerja.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        goal_pomodoros: {
+          type: 'number',
+          description: 'Jumlah target siklus Pomodoro (contoh: 6 atau 8 siklus).'
+        }
+      },
+      required: ['goal_pomodoros']
     }
   }
 ];
@@ -305,6 +338,15 @@ export async function handleRpcRequest(request) {
         const curStatus = getStatus();
         git.commitSuggestion = curStatus.active ? generateCommitSuggestion(curStatus) : null;
         contentText = JSON.stringify(git, null, 2);
+      } else if (name === 'devflow_get_weekly_stats') {
+        const res = getWeeklyStats();
+        contentText = JSON.stringify(res, null, 2);
+      } else if (name === 'devflow_log_water') {
+        const res = logWater();
+        contentText = JSON.stringify(res, null, 2);
+      } else if (name === 'devflow_set_goal') {
+        const res = setDailyGoal(args.goal_pomodoros);
+        contentText = JSON.stringify(res, null, 2);
       } else {
         throw new Error(`Tool '${name}' tidak dikenali.`);
       }

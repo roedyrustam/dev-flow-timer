@@ -7,6 +7,9 @@ import {
   stopSession,
   getStatus,
   getDailyStats,
+  getWeeklyStats,
+  logWater,
+  setDailyGoal,
   getErgonomicTip,
   recordActivity
 } from '../lib/timer-engine.mjs';
@@ -120,6 +123,67 @@ switch (command) {
     break;
   }
 
+  case 'week': {
+    const weekly = getWeeklyStats();
+    printHeader();
+    console.log(`  📅 \x1b[1mTren 7 Hari Terakhir\x1b[0m (Total: \x1b[32m${weekly.totalWeeklyCodingMinutes}m\x1b[0m | \x1b[34m${weekly.totalWeeklyBreakMinutes}m break\x1b[0m | ${weekly.totalWeeklyPomodoros} Pomodoro)`);
+    console.log(`  🔥 Streak Fokus : \x1b[35m${weekly.currentStreakDays} Hari Berturut-turut\x1b[0m\n`);
+
+    const maxMins = Math.max(30, ...weekly.days.map(d => d.codingMinutes));
+    weekly.days.forEach(d => {
+      const bars = Math.round((d.codingMinutes / maxMins) * 20);
+      const barStr = bars > 0 ? '\x1b[32m' + '█'.repeat(bars) + '\x1b[0m' : '░';
+      console.log(`  ${d.dayName} (${d.date.slice(5)}): ${barStr.padEnd(28)} ${d.codingMinutes}m (${d.pomodoros}🍅)`);
+    });
+
+    if (weekly.tags && weekly.tags.length > 0) {
+      console.log(`\n  🏷️  \x1b[1mDistribusi Kategori Tugas:\x1b[0m`);
+      weekly.tags.forEach(t => {
+        console.log(`     • ${t.tag.padEnd(14)} : ${t.minutes}m (${t.percent}%)`);
+      });
+    }
+    console.log('');
+    break;
+  }
+
+  case 'goal': {
+    printHeader();
+    const count = parseInt(args[1], 10);
+    if (!count) {
+      const stats = getDailyStats();
+      console.log(`  🎯 Target Harian : ${stats.completedPomodoros} / ${stats.dailyGoalPomodoros || 6} Pomodoro (${stats.goalProgressPercent}%)`);
+      console.log(`  Gunakan: \x1b[32mdevflow goal 8\x1b[0m untuk mengubah target.\n`);
+    } else {
+      const res = setDailyGoal(count);
+      console.log(`  \x1b[32m✔ ${res.message}\x1b[0m\n`);
+    }
+    break;
+  }
+
+  case 'water': {
+    printHeader();
+    const res = logWater();
+    console.log(`  \x1b[36m${res.message}\x1b[0m\n`);
+    break;
+  }
+
+  case 'log': {
+    printHeader();
+    const stats = getDailyStats();
+    console.log(`  📋 \x1b[1mRiwayat Sesi Coding Hari Ini (${stats.date})\x1b[0m`);
+    if (!stats.recentSessions || stats.recentSessions.length === 0) {
+      console.log(`     (Belum ada sesi yang selesai hari ini)\n`);
+    } else {
+      stats.recentSessions.forEach((s, idx) => {
+        const timeStr = s.startTimestamp ? new Date(s.startTimestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+        const statusEmoji = s.completed ? '✔' : '✖';
+        console.log(`     ${idx + 1}. [${timeStr}] ${statusEmoji} ${s.type.toUpperCase().padEnd(11)} : ${s.task} (${s.actualElapsedMinutes}m) [tag: ${s.tag}]`);
+      });
+      console.log('');
+    }
+    break;
+  }
+
   case 'dashboard': {
     printHeader();
     console.log(`  🚀 Membuka Cockpit Dashboard visual di browser...`);
@@ -213,6 +277,10 @@ switch (command) {
     console.log(`    pause / resume         - Jeda atau lanjutkan timer`);
     console.log(`    stop                   - Selesaikan sesi dan simpan ke riwayat`);
     console.log(`    stats                  - Lihat ringkasan metrik produktivitas harian`);
+    console.log(`    week                   - Grafik tren produktivitas 7 hari & distribusi tag`);
+    console.log(`    goal [jumlah]          - Atur target jumlah siklus Pomodoro harian`);
+    console.log(`    water                  - Catat 1 gelas air hidrasi (+1 gelas)`);
+    console.log(`    log                    - Lihat tabel log riwayat sesi hari ini`);
     console.log(`    report                 - Buat dan ekspor laporan analitik produktivitas (Markdown)`);
     console.log(`    git                    - Periksa konteks cabang Git & rekomendasi tugas fokus`);
     console.log(`    dashboard              - Buka Cockpit visual di browser`);

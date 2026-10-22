@@ -10,6 +10,9 @@ import {
   resumeSession,
   stopSession,
   getDailyStats,
+  getWeeklyStats,
+  logWater,
+  setDailyGoal,
   getErgonomicTip,
   loadState,
   recordActivity
@@ -370,6 +373,36 @@ function getPanelHtml() {
       </div>
     </div>
 
+    <!-- Daily Goal & Hydration -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+        <span style="font-size: 0.75rem; font-weight: 700;">Target Harian</span>
+        <span style="font-size: 0.68rem; color: #34d399; font-weight: 600;" id="goalText">${stats.completedPomodoros} / ${stats.dailyGoalPomodoros || 6} Pomodoro (${stats.goalProgressPercent}%)</span>
+      </div>
+      <div style="background: #1e293b; height: 6px; border-radius: 999px; overflow: hidden;">
+        <div id="goalBar" style="background: linear-gradient(90deg, #10b981, #06b6d4); height: 100%; width: ${stats.goalProgressPercent}%; transition: width 0.5s ease;"></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.6rem; font-size: 0.7rem; color: var(--text-muted);">
+        <div style="display: flex; align-items: center; gap: 0.3rem;">
+          <span>💧 Air:</span>
+          <strong id="waterCount" style="color: #38bdf8;">${stats.waterGlasses || 0}</strong> gelas
+        </div>
+        <button onclick="addWater()" style="background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.3); color: #38bdf8; padding: 0.2rem 0.55rem; border-radius: 4px; font-size: 0.65rem; font-weight: 600; cursor: pointer; transition: all 0.15s;">+1 Minum</button>
+      </div>
+    </div>
+
+    <!-- 7-Day Trend Chart -->
+    <div class="card">
+      <div style="font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+        <span>Tren 7 Hari</span>
+        <span style="font-size: 0.65rem; color: #c084fc; font-weight: 600;" id="streakPill">🔥 Streak</span>
+      </div>
+      <div id="weeklyBars" style="display: flex; justify-content: space-between; align-items: flex-end; height: 46px; padding-top: 4px; border-bottom: 1px solid #1e293b; gap: 4px;">
+      </div>
+      <div id="weeklyLabels" style="display: flex; justify-content: space-between; font-size: 0.58rem; color: #64748b; margin-top: 0.25rem;">
+      </div>
+    </div>
+
     <div class="tip-box" id="tipCard">
       🛡️ <strong>${tip.title}</strong><br>
       <span id="tipAction">${tip.action}</span>
@@ -523,9 +556,55 @@ function getPanelHtml() {
       }
     }
 
+    async function addWater() {
+      try {
+        const res = await fetch('/api/water', { method: 'POST' });
+        if (res.ok) {
+          const d = await res.json();
+          document.getElementById('waterCount').textContent = d.glasses;
+          playSound(660);
+        }
+      } catch(e) {}
+    }
+
+    async function loadWeekly() {
+      try {
+        const res = await fetch('/api/weekly');
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('streakPill').textContent = '🔥 ' + data.currentStreakDays + ' Hari Streak';
+          
+          const maxMin = Math.max(30, ...data.days.map(d => d.codingMinutes));
+          const barsContainer = document.getElementById('weeklyBars');
+          const labelsContainer = document.getElementById('weeklyLabels');
+          barsContainer.innerHTML = '';
+          labelsContainer.innerHTML = '';
+
+          data.days.forEach(d => {
+            const h = Math.max(4, Math.round((d.codingMinutes / maxMin) * 40));
+            const bar = document.createElement('div');
+            bar.style.flex = '1';
+            bar.style.height = h + 'px';
+            bar.style.background = d.codingMinutes > 0 ? 'linear-gradient(180deg, #34d399, #059669)' : '#1e293b';
+            bar.style.borderRadius = '3px 3px 0 0';
+            bar.title = d.dayName + ': ' + d.codingMinutes + 'm coding (' + d.pomodoros + ' pomodoros)';
+            barsContainer.appendChild(bar);
+
+            const lbl = document.createElement('div');
+            lbl.style.flex = '1';
+            lbl.style.textAlign = 'center';
+            lbl.textContent = d.dayName;
+            labelsContainer.appendChild(lbl);
+          });
+        }
+      } catch(e) {}
+    }
+
     // Auto-poll status every 1 second for live synchronization
     pollStatus();
+    loadWeekly();
     setInterval(pollStatus, 1000);
+    setInterval(loadWeekly, 15000);
   </script>
 </body>
 </html>`;
@@ -579,6 +658,12 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (url.pathname === '/api/weekly' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(getWeeklyStats()));
+    return;
+  }
+
   // POST action endpoints
   if (req.method === 'POST') {
     let body = '';
@@ -620,6 +705,20 @@ const server = http.createServer(async (req, res) => {
           completed: data.completed !== undefined ? Boolean(data.completed) : true,
           reason: data.reason || 'manual_stop'
         });
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(out));
+        return;
+      }
+
+      if (url.pathname === '/api/water') {
+        const out = logWater();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(out));
+        return;
+      }
+
+      if (url.pathname === '/api/goal') {
+        const out = setDailyGoal(data.goal);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(out));
         return;
